@@ -1,0 +1,32 @@
+pipeline{
+    
+    agent {label "slave1-Devteam"}
+        stages{
+          stage("GitCheckout"){
+          steps{
+	        git credentialsId: 'c586eca8-a874-4f1a-b7f4-749417e3033d', url: 'https://github.com/Thimraj/myweb.git'
+	        }
+	    }
+	    
+        stage("Build"){
+	      steps{
+                sh "mvn clean package"
+                sh "mv target/*.war target/myweb.war"
+	        }
+	    }
+	            stage("deploy to tomcat"){
+            steps{
+                sshagent(['c586eca8-a874-4f1a-b7f4-749417e3033d']){
+                sh """
+                    scp -o StrictHostKeyChecking=no target/myweb.war ec2-user@172.31.38.56:/home/ec2-user/apache-tomcat-9.0.75/webapps/
+                    
+                    ssh ec2-user@172.31.38.56 /home/ec2-user/apache-tomcat-9.0.75/bin/shutdown.sh
+                    
+                    ssh ec2-user@172.31.38.56 /home/ec2-user/apache-tomcat-9.0.75/bin/startup.sh
+                
+                """
+                }
+            }
+	    }
+    }
+}

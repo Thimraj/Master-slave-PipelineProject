@@ -4,7 +4,7 @@ pipeline{
         stages{
           stage("GitCheckout"){
           steps{
-	        git credentialsId: 'c586eca8-a874-4f1a-b7f4-749417e3033d', url: 'https://github.com/Thimraj/myweb.git'
+	        git branch: 'main', credentialsId: 'javahome2', url: 'https://github.com/Thimraj/Master-slave-PipelineProject.git'
 	        }
 	    }
 	    
@@ -27,6 +27,6 @@ pipeline{
                 """
                 }
             }
-	    }
+	 }
     }
 }
